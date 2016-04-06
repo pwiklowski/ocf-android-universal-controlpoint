@@ -12,15 +12,17 @@ public class OcfControlPoint {
         System.loadLibrary("test");
     }
     private native int init();
+    private native OcfDevice testObject();
     public native void searchDevices();
+
 
 
     public OcfControlPoint(){
         init();
     }
 
-    private void deviceFound(String id){
-        Log.d(TAG, "deviceFound " + id);
+    private void deviceFound(OcfDevice dev){
+        Log.d(TAG, "deviceFound " + dev);
 
 
     }

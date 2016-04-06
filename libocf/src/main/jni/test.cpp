@@ -44,19 +44,20 @@ extern "C" {
 
         return JNI_VERSION_1_6;
     }
-    jobject createDevice(){
-        jmethodID constructor = m_env->GetMethodID(m_OcfDeviceClass, "<init>", "()V");
-        jobject obj = m_env->NewObject(m_OcfDeviceClass, constructor);
+    jobject createDevice(String name, String id){
+        jmethodID constructor = m_env->GetMethodID(m_OcfDeviceClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
+        jobject obj = m_env->NewObject(m_OcfDeviceClass, constructor, m_env->NewStringUTF(name.c_str()), m_env->NewStringUTF(id.c_str()));
         return obj;
 
     }
 
 
-    void deviceFound(String id ){
+    void deviceFound(String name, String di){
+        log("deviceFound");
         m_jvm->AttachCurrentThread(&m_env, NULL);
-        jmethodID gJMethodID = m_env->GetMethodID(m_class, "deviceFound", "(Ljava/lang/String;)V");
-        jstring param = m_env->NewStringUTF(id.c_str() );
-        m_env->CallVoidMethod(m_obj, gJMethodID, param);
+        jobject d2 = createDevice(name, di);
+        jmethodID gJMethodID = m_env->GetMethodID(m_class, "deviceFound", "(Locfcontrolpoint/wiklosoft/libocf/OcfDevice;)V");
+        m_env->CallVoidMethod(m_obj, gJMethodID, d2);
         m_jvm->DetachCurrentThread();
     }
     void Java_ocfcontrolpoint_wiklosoft_libocf_OcfControlPoint_searchDevices( JNIEnv* env, jobject thiz)
@@ -137,7 +138,7 @@ void findDevices()
                     dev->getResources()->push_back(new OICDeviceResource(href, iff, rt, dev, m_client));
                 }
                 m_deivces.append(dev);
-                deviceFound(di);
+                deviceFound(name, di);
 
             }
         }
