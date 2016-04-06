@@ -32,13 +32,23 @@ jobject m_obj;
 jclass m_class;
 
 
+jclass m_OcfDeviceClass;
+
+
 extern "C" {
     JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
     {
         m_jvm = jvm;
 
         int status = m_jvm->GetEnv((void **)&m_env, JNI_VERSION_1_6);
+
         return JNI_VERSION_1_6;
+    }
+    jobject createDevice(){
+        jmethodID constructor = m_env->GetMethodID(m_OcfDeviceClass, "<init>", "()V");
+        jobject obj = m_env->NewObject(m_OcfDeviceClass, constructor);
+        return obj;
+
     }
 
 
@@ -62,6 +72,11 @@ extern "C" {
         jclass clazz = env->GetObjectClass(thiz);
 	    m_class = (jclass)env->NewGlobalRef(clazz);
 
+
+        jclass ocfDeviceClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDevice");
+	    m_OcfDeviceClass = (jclass)env->NewGlobalRef(ocfDeviceClass);
+
+
         m_client = new OICClient([&](COAPPacket* packet){
             send_packet(packet);
         });
@@ -72,25 +87,13 @@ extern "C" {
         findDevices();
 
         return 5;
-
     }
 
 
 
 
-
 }
 
-jobject createDevice(){
-
-    jclass cls = env->FindClass("com/example/jnisqliteexperiment/JPoint");
-
-        //creating new Jpoint(int[])
-        constructor = env->GetMethodID( cls, "<init>", "([I)V");
-        jobject obj = env->NewObject(cls, constructor,  xy);
-
-
-}
 
 
 bool isDeviceOnList(String id){
