@@ -33,6 +33,7 @@ jclass m_class;
 
 
 jclass m_OcfDeviceClass;
+jclass m_OcfDeviceVariableClass;
 
 
 extern "C" {
@@ -48,14 +49,27 @@ extern "C" {
         jmethodID constructor = m_env->GetMethodID(m_OcfDeviceClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
         jobject obj = m_env->NewObject(m_OcfDeviceClass, constructor, m_env->NewStringUTF(name.c_str()), m_env->NewStringUTF(id.c_str()));
         return obj;
-
     }
 
 
-    void deviceFound(String name, String di){
+    void deviceFound(OICDevice* dev){
         log("deviceFound");
         m_jvm->AttachCurrentThread(&m_env, NULL);
-        jobject d2 = createDevice(name, di);
+        jobject d2 = createDevice(dev->getName(), dev->getId());
+
+        jmethodID addVariableMethod = m_env->GetMethodID(m_OcfDeviceClass, "appendVariable", "(Locfcontrolpoint/wiklosoft/libocf/OcfDeviceVariable;)V");
+
+        for(size_t i=0; i<dev->getResources()->size(); i++)
+        {
+            jmethodID constructor = m_env->GetMethodID(m_OcfDeviceVariableClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+            jobject v = m_env->NewObject(m_OcfDeviceVariableClass, constructor,
+                                    m_env->NewStringUTF(dev->getResources()->at(i)->getInterface().c_str()),
+                                    m_env->NewStringUTF(dev->getResources()->at(i)->getHref().c_str()),
+                                    m_env->NewStringUTF(dev->getResources()->at(i)->getResourceType().c_str()));
+
+            m_env->CallVoidMethod(d2, addVariableMethod, v);
+        }
+
         jmethodID gJMethodID = m_env->GetMethodID(m_class, "deviceFound", "(Locfcontrolpoint/wiklosoft/libocf/OcfDevice;)V");
         m_env->CallVoidMethod(m_obj, gJMethodID, d2);
         m_jvm->DetachCurrentThread();
@@ -66,7 +80,7 @@ extern "C" {
     }
 
 
-    jint Java_ocfcontrolpoint_wiklosoft_libocf_OcfControlPoint_init( JNIEnv* env, jobject thiz)
+    void Java_ocfcontrolpoint_wiklosoft_libocf_OcfControlPoint_init( JNIEnv* env, jobject thiz)
     {
         m_env = env;
         m_obj = env->NewGlobalRef(thiz);
@@ -77,6 +91,8 @@ extern "C" {
         jclass ocfDeviceClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDevice");
 	    m_OcfDeviceClass = (jclass)env->NewGlobalRef(ocfDeviceClass);
 
+        jclass ocfDeviceVariableClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDeviceVariable");
+	    m_OcfDeviceVariableClass = (jclass)env->NewGlobalRef(ocfDeviceVariableClass);
 
         m_client = new OICClient([&](COAPPacket* packet){
             send_packet(packet);
@@ -138,7 +154,7 @@ void findDevices()
                     dev->getResources()->push_back(new OICDeviceResource(href, iff, rt, dev, m_client));
                 }
                 m_deivces.append(dev);
-                deviceFound(name, di);
+                deviceFound(dev);
 
             }
         }

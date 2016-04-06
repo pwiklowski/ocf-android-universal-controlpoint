@@ -11,8 +11,7 @@ public class OcfControlPoint {
     static {
         System.loadLibrary("test");
     }
-    private native int init();
-    private native OcfDevice testObject();
+    private native void init();
     public native void searchDevices();
 
 
