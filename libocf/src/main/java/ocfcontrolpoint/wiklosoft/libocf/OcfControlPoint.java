@@ -22,6 +22,7 @@ public class OcfControlPoint {
 
     private void deviceFound(OcfDevice dev){
         Log.d(TAG, "deviceFound " + dev);
+        dev.get(dev.variables().get(0).getHref());
 
 
     }

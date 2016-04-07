@@ -19,8 +19,8 @@ int m_socketFd;
 pthread_t m_thread;
 
 
-List<OICDevice*> m_deivces;
-#define APPNAME "OcfControlPoint"
+List<OICDevice*> m_devices;
+#define APPNAME "OcfControlPointNative"
 
 
 #define log(...) __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, __VA_ARGS__);
@@ -35,6 +35,10 @@ jclass m_class;
 jclass m_OcfDeviceClass;
 jclass m_OcfDeviceVariableClass;
 
+
+void get(OICDeviceResource* res);
+OICDevice* getDevice(String di);
+OICDeviceResource* getDeviceResource(OICDevice* dev, String href);
 
 extern "C" {
     JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *reserved)
@@ -102,25 +106,78 @@ extern "C" {
         pthread_create(&m_thread, NULL, run, 0);
 
         findDevices();
-
-        return 5;
     }
+    void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_get( JNIEnv* env, jobject thiz, jstring hrefTmp)
+    {
+        log("get");
+        String di;
+        String href;
+
+        const char* strChars = env->GetStringUTFChars(hrefTmp, (jboolean *)0);
+        href.append(strChars);
+        env->ReleaseStringUTFChars(hrefTmp, strChars);
 
 
+        jfieldID diFieldId = env->GetFieldID(m_OcfDeviceClass, "mDi", "Ljava/lang/String;" );
+        if (diFieldId == 0){
+            log("diFieldID is 0 ");
+            return;
+        }
+        jstring  diFieldValue = (jstring)env->GetObjectField(thiz, diFieldId);
+        if (diFieldValue == 0){
+            log("diFieldValue is 0 ");
+            return;
+        }
 
+        const char* diChars = env->GetStringUTFChars(diFieldValue, (jboolean *)0);
+        di.append(diChars);
+        env->ReleaseStringUTFChars(diFieldValue, diChars);
+
+        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "get %s %s",di.c_str(), href.c_str());
+
+        OICDevice* dev = getDevice(di);
+        if (dev != 0){
+            OICDeviceResource* res = getDeviceResource(dev, href);
+            if (res != 0){
+                get(res);
+            }
+        }
+    }
+}
+
+void get(OICDeviceResource* resource){
+    resource->get([&] (COAPPacket* response){
+        cbor* res = cbor::parse(response->getPayload());
+        log("get response");
+    });
 
 }
 
+OICDevice* getDevice(String di){
 
+    for (uint8_t i=0; i<m_devices.size(); i++){
+        OICDevice* d = m_devices.at(i);
+        if (d->getId() == di){
+            return d;
+        }
+    }
+    return 0;
+}
+
+OICDeviceResource* getDeviceResource(OICDevice* dev, String href){
+
+    for (uint8_t i=0; i<dev->getResources()->size(); i++){
+        OICDeviceResource* v = dev->getResources()->at(i);
+        if (v->getHref() == href){
+            return v;
+        }
+    }
+    return 0;
+}
 
 bool isDeviceOnList(String id){
-    //for (Device* d: m_device_list){
-    //    if (d->getID() == id){
-    //        return true;
-    //    }
-    // }
-    return false;
- }
+    return getDevice(id) != 0;
+}
 
 void findDevices()
 {
@@ -153,7 +210,7 @@ void findDevices()
 
                     dev->getResources()->push_back(new OICDeviceResource(href, iff, rt, dev, m_client));
                 }
-                m_deivces.append(dev);
+                m_devices.append(dev);
                 deviceFound(dev);
 
             }

@@ -23,8 +23,10 @@ public class OcfDevice {
 
     }
 
-    public void test(){
-        Log.d("OcfDevice", "Testowa metoda dziala");
+    public List<OcfDeviceVariable> variables(){
+        return mOcfDeviceVariableList;
     }
 
+
+    public native void get(String href);
 }

@@ -10,10 +10,17 @@ public class OcfDeviceVariable {
     private String mResourceType;
     private String mHref;
 
-    public OcfDeviceVariable(String iff, String rt, String href){
+    static {
+        System.loadLibrary("test");
+    }
+    public OcfDeviceVariable(String iff, String href, String rt){
         miff= iff;
         mResourceType = rt;
         mHref = href;
+    }
+
+    String getHref(){
+        return mHref;
     }
 
 
