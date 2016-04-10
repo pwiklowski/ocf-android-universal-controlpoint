@@ -24,8 +24,8 @@ public class OcfControlPoint {
         Log.d(TAG, "deviceFound " + dev);
         dev.get(dev.variables().get(0).getHref(), new OcfDeviceVariableCallback() {
             @Override
-            public void update() {
-                Log.d(TAG, "variable updated");
+            public void update(String json) {
+                Log.d(TAG, "variable updated" + json);
             }
         });
 

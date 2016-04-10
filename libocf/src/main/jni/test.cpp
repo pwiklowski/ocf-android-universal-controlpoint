@@ -147,9 +147,10 @@ extern "C" {
                 res->get([=] (COAPPacket* response){
                     m_jvm->AttachCurrentThread(&m_env, NULL);
                     log("get response");
-                    jmethodID callbackID = m_env->GetMethodID(m_OcfDeviceVariableCallbackClass, "update", "()V");
-
-                    m_env->CallVoidMethod(globalCallback, callbackID);
+                    jmethodID callbackID = m_env->GetMethodID(m_OcfDeviceVariableCallbackClass, "update", "(Ljava/lang/String;)V");
+                    cbor* cborResponse = cbor::parse(response->getPayload());
+                    String cborString = cbor::toJsonString(cborResponse);
+                    m_env->CallVoidMethod(globalCallback, callbackID, m_env->NewStringUTF(cborString.c_str()));
                     m_env->DeleteGlobalRef(globalCallback);
                     m_jvm->DetachCurrentThread();
                 });
