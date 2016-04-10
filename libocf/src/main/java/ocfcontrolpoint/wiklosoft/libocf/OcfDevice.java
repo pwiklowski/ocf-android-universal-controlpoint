@@ -28,5 +28,5 @@ public class OcfDevice {
     }
 
 
-    public native void get(String href);
+    public native void get(String href, OcfDeviceVariableCallback callback);
 }

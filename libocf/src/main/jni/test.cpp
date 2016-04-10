@@ -34,9 +34,10 @@ jclass m_class;
 
 jclass m_OcfDeviceClass;
 jclass m_OcfDeviceVariableClass;
+jclass m_OcfDeviceVariableCallbackClass;
 
 
-void get(OICDeviceResource* res);
+void get(OICDeviceResource* res, jobject callbackObject);
 OICDevice* getDevice(String di);
 OICDeviceResource* getDeviceResource(OICDevice* dev, String href);
 
@@ -98,6 +99,9 @@ extern "C" {
         jclass ocfDeviceVariableClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDeviceVariable");
 	    m_OcfDeviceVariableClass = (jclass)env->NewGlobalRef(ocfDeviceVariableClass);
 
+        jclass ocfDeviceVariableCallbackClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDeviceVariableCallback");
+	    m_OcfDeviceVariableCallbackClass = (jclass)env->NewGlobalRef(ocfDeviceVariableCallbackClass);
+
         m_client = new OICClient([&](COAPPacket* packet){
             send_packet(packet);
         });
@@ -107,7 +111,7 @@ extern "C" {
 
         findDevices();
     }
-    void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_get( JNIEnv* env, jobject thiz, jstring hrefTmp)
+    void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_get( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
     {
         log("get");
         String di;
@@ -139,18 +143,19 @@ extern "C" {
         if (dev != 0){
             OICDeviceResource* res = getDeviceResource(dev, href);
             if (res != 0){
-                get(res);
+                jobject globalCallback = m_env->NewGlobalRef(callbackObject);
+                res->get([=] (COAPPacket* response){
+                    m_jvm->AttachCurrentThread(&m_env, NULL);
+                    log("get response");
+                    jmethodID callbackID = m_env->GetMethodID(m_OcfDeviceVariableCallbackClass, "update", "()V");
+
+                    m_env->CallVoidMethod(globalCallback, callbackID);
+                    m_env->DeleteGlobalRef(globalCallback);
+                    m_jvm->DetachCurrentThread();
+                });
             }
         }
     }
-}
-
-void get(OICDeviceResource* resource){
-    resource->get([&] (COAPPacket* response){
-        cbor* res = cbor::parse(response->getPayload());
-        log("get response");
-    });
-
 }
 
 OICDevice* getDevice(String di){
@@ -230,6 +235,7 @@ String convertAddress(sockaddr_in a){
     return addr;
 }
 void* run(void* param){
+    m_jvm->AttachCurrentThread(&m_env, NULL);
     COAPServer* coap_server = m_client->getCoapServer();
 
 
@@ -277,6 +283,7 @@ void* run(void* param){
         }
         coap_server->tick();
     }
+    m_jvm->DetachCurrentThread();
 }
 
 
