@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="wiklosoft.iotcontroller.DeviceListFragment"
+             android:orientation="vertical">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="#9b59b6"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="128dp"
+            android:layout_height="match_parent"
+            android:id="@+id/backButton"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="40dp"
+            android:text="Available variables"
+            android:padding="30dp"
+            android:textColor="#FFF"
+            android:background="#9b59b6"
+            />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/variableList"
+        android:layout_gravity="left|top"/>
+
+</LinearLayout>
+

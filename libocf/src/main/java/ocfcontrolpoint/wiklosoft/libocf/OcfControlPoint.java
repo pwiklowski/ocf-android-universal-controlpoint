@@ -2,9 +2,14 @@ package ocfcontrolpoint.wiklosoft.libocf;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Pawel Wiklowski on 02.04.16.
  */
+
+
 public class OcfControlPoint {
     private static final String TAG = "OcfControlPoint";
 
@@ -15,13 +20,31 @@ public class OcfControlPoint {
     public native void searchDevices();
 
 
+    List<OcfOnDeviceFound> mOcfOnDeviceFoundList = new ArrayList<>();
+
+    public interface OcfOnDeviceFound{
+        void deviceFound(OcfDevice dev);
+    }
 
     public OcfControlPoint(){
         init();
     }
 
+    public void addOnDeviceFoundCallback(OcfOnDeviceFound callback){
+        mOcfOnDeviceFoundList.add(callback);
+    }
+
+    public void removeOnDeviceFoundCallback(OcfOnDeviceFound callback){
+        mOcfOnDeviceFoundList.remove(callback);
+    }
+    //Do not touch it, method called from JNI
     private void deviceFound(OcfDevice dev){
         Log.d(TAG, "deviceFound " + dev);
+
+        for(int i=0;i<mOcfOnDeviceFoundList.size(); i++){
+            mOcfOnDeviceFoundList.get(i).deviceFound(dev);
+        }
+
         dev.get(dev.variables().get(0).getHref(), new OcfDeviceVariableCallback() {
             @Override
             public void update(String json) {

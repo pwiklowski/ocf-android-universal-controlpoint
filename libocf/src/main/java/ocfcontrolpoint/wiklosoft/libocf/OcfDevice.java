@@ -23,6 +23,9 @@ public class OcfDevice {
 
     }
 
+    public String getName(){ return mName;}
+    public String getDi(){ return mDi;}
+
     public List<OcfDeviceVariable> variables(){
         return mOcfDeviceVariableList;
     }
