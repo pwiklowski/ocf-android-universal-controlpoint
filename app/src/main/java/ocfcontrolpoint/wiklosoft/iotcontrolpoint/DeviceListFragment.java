@@ -2,9 +2,11 @@ package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -49,6 +51,7 @@ public class DeviceListFragment extends Fragment {
 
     @Override
     public void onStop(){
+        super.onStop();
         mControlPoint.removeOnDeviceFoundCallback(deviceFoundCallback);
     }
 
@@ -65,6 +68,17 @@ public class DeviceListFragment extends Fragment {
 
         mListView =(ListView) root.findViewById(R.id.deviceList);
         mListView.setAdapter(new DeviceListAdapter(getContext(), mDevices));
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                OcfDevice device = mDevices.get(i);
+
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, VariableListFragment.newInstance(device)).addToBackStack("")
+                        .commit();
+            }
+        });
         return root;
     }
 

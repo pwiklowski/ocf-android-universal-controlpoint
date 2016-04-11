@@ -19,7 +19,7 @@ public class OcfDeviceVariable {
         mHref = href;
     }
 
-    String getHref(){
+    public String getHref(){
         return mHref;
     }
 
