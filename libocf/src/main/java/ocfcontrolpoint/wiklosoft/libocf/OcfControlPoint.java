@@ -19,8 +19,8 @@ public class OcfControlPoint {
     private native void init();
     public native void searchDevices();
 
-
     List<OcfOnDeviceFound> mOcfOnDeviceFoundList = new ArrayList<>();
+    List<OcfDevice> mDevices = new ArrayList<>();
 
     public interface OcfOnDeviceFound{
         void deviceFound(OcfDevice dev);
@@ -40,6 +40,7 @@ public class OcfControlPoint {
     //Do not touch it, method called from JNI
     private void deviceFound(OcfDevice dev){
         Log.d(TAG, "deviceFound " + dev);
+        mDevices.add(dev);
 
         for(int i=0;i<mOcfOnDeviceFoundList.size(); i++){
             mOcfOnDeviceFoundList.get(i).deviceFound(dev);
@@ -53,5 +54,8 @@ public class OcfControlPoint {
         });
 
 
+    }
+    public List<OcfDevice> getDevices(){
+        return mDevices;
     }
 }
