@@ -2,6 +2,7 @@ package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ public class VariableListAdapter extends BaseAdapter {
     OcfDevice mDevice;
     LayoutInflater mInflater;
     TextView name;
-    TextView value;
     Activity mActivity;
 
     VariableListAdapter(Activity context, OcfDevice device)
@@ -48,16 +48,24 @@ public class VariableListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
-        if (vi == null)
-            vi = mInflater.inflate(R.layout.variable_entry, null);
+        OcfDeviceVariable variable = mDevice.variables().get(position);
+
+        Log.d("VariableListAdapter ", variable.getHref() + " " + variable.getResourceType());
+        if (vi == null){
+            if (variable.getResourceType().equals("oic.r.light.dimming")) {
+                vi = mInflater.inflate(R.layout.resource_light_dimming, null);
+
+            }else if (variable.getResourceType().equals("oic.r.colour.rgb")) {
+                vi = mInflater.inflate(R.layout.resource_colour_rgb, null);
+            }else{
+                vi = mInflater.inflate(R.layout.variable_entry, null);
+            }
+
+        }
 
         name = (TextView) vi.findViewById(R.id.variableName);
-        value = (TextView) vi.findViewById(R.id.variableValue);
-        final OcfDeviceVariable variable = mDevice.variables().get(position);
 
         name.setText(variable.getHref());
-        //value.setText(Integer.toString(variable.getValue()));
-
 
         return vi;
     }

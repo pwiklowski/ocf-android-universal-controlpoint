@@ -23,5 +23,9 @@ public class OcfDeviceVariable {
         return mHref;
     }
 
+    public String getResourceType(){
+        return mResourceType;
+    }
+
 
 }
