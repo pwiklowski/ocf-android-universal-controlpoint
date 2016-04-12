@@ -15,7 +15,10 @@
         <ImageButton
             android:layout_width="128dp"
             android:layout_height="match_parent"
-            android:id="@+id/backButton"/>
+            android:id="@+id/backButton"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="#0000a3e3"
+            android:scaleType="center"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -25,14 +28,18 @@
             android:padding="30dp"
             android:textColor="#FFF"
             android:background="#9b59b6"
-            />
+            android:fontFamily="sans-serif-light"/>
     </LinearLayout>
 
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/variableList"
-        android:layout_gravity="left|top"/>
+        android:layout_gravity="left|top"
+        android:background="#ffe7e7e7"
+        android:padding="10dp"
+        android:dividerHeight="10dp"
+        android:divider="#ffe7e7e7"/>
 
 </LinearLayout>
 
