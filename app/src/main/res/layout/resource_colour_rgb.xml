@@ -30,7 +30,8 @@
         android:paddingLeft="40dp"
         android:paddingRight="40dp"
         android:paddingBottom="15dp"
-        android:indeterminate="false"/>
+        android:indeterminate="false"
+        android:max="10000"/>
     <SeekBar
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -39,7 +40,8 @@
         android:paddingLeft="40dp"
         android:paddingRight="40dp"
         android:paddingBottom="15dp"
-        android:indeterminate="false"/>
+        android:indeterminate="false"
+        android:max="10000"/>
     <SeekBar
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -48,5 +50,7 @@
         android:paddingLeft="40dp"
         android:paddingRight="40dp"
         android:paddingBottom="15dp"
-        android:indeterminate="false"/>
+        android:indeterminate="false"
+        android:longClickable="false"
+        android:max="10000"/>
 </LinearLayout>

@@ -9,6 +9,7 @@ public class OcfDeviceVariable {
     private String miff;
     private String mResourceType;
     private String mHref;
+    private String mValue;
 
     static {
         System.loadLibrary("test");
@@ -27,5 +28,12 @@ public class OcfDeviceVariable {
         return mResourceType;
     }
 
+    public String getValue(){
+        return mValue;
+    }
+
+    public void setValue(String value){
+        mValue = value;
+    }
 
 }

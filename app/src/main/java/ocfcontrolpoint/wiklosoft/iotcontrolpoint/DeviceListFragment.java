@@ -68,7 +68,6 @@ public class DeviceListFragment extends Fragment {
 
         mListView =(ListView) root.findViewById(R.id.deviceList);
 
-        mDevices = mControlPoint.getDevices();
 
         mListView.setAdapter(new DeviceListAdapter(getContext(), mDevices));
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

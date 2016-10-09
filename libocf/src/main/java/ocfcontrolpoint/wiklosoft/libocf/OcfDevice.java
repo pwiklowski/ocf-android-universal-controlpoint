@@ -32,4 +32,9 @@ public class OcfDevice {
 
 
     public native void get(String href, OcfDeviceVariableCallback callback);
+    public native void observe(String href, OcfDeviceVariableCallback callback);
+    public native void unobserve(String href, OcfDeviceVariableCallback callback);
+
+    public native void post(String href, String value, OcfDeviceVariableCallback callback);
+
 }

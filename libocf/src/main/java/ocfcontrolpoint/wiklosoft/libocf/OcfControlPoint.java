@@ -46,13 +46,6 @@ public class OcfControlPoint {
             mOcfOnDeviceFoundList.get(i).deviceFound(dev);
         }
 
-        dev.get(dev.variables().get(0).getHref(), new OcfDeviceVariableCallback() {
-            @Override
-            public void update(String json) {
-                Log.d(TAG, "variable updated" + json);
-            }
-        });
-
 
     }
     public List<OcfDevice> getDevices(){

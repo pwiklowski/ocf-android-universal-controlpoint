@@ -111,10 +111,11 @@ extern "C" {
 
         pthread_create(&m_thread, NULL, run, 0);
 
-        findDevices();
+        //findDevices();
     }
     void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_get( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
     {
+        m_jvm->AttachCurrentThread(&m_env, NULL);
         log("get");
         String di;
         String href;
@@ -145,14 +146,161 @@ extern "C" {
         if (dev != 0){
             OICDeviceResource* res = getDeviceResource(dev, href);
             if (res != 0){
+
+                __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "get %d", callbackObject);
                 jobject globalCallback = m_env->NewGlobalRef(callbackObject);
+                __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "get %d", callbackObject);
+
                 res->get([=] (COAPPacket* response){
-                    m_jvm->AttachCurrentThread(&m_env, NULL);
                     log("get response");
+                    m_jvm->AttachCurrentThread(&m_env, NULL);
                     jmethodID callbackID = m_env->GetMethodID(m_OcfDeviceVariableCallbackClass, "update", "(Ljava/lang/String;)V");
-                    cbor* cborResponse = cbor::parse(response->getPayload());
-                    String cborString = cbor::toJsonString(cborResponse);
+                    cbor cborResponse;
+                    cbor::parse(&cborResponse, response->getPayload());
+                    String cborString = cbor::toJsonString(&cborResponse);
                     m_env->CallVoidMethod(globalCallback, callbackID, m_env->NewStringUTF(cborString.c_str()));
+                    m_env->DeleteGlobalRef(globalCallback);
+
+                    m_jvm->DetachCurrentThread();
+                });
+            }
+        }
+    }
+
+
+    void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_unobserve( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
+    {
+        m_jvm->AttachCurrentThread(&m_env, NULL);
+        String di;
+        String href;
+
+        const char* strChars = env->GetStringUTFChars(hrefTmp, (jboolean *)0);
+        href.append(strChars);
+        env->ReleaseStringUTFChars(hrefTmp, strChars);
+
+
+        jfieldID diFieldId = env->GetFieldID(m_OcfDeviceClass, "mDi", "Ljava/lang/String;" );
+        if (diFieldId == 0){
+            log("diFieldID is 0 ");
+            return;
+        }
+        jstring  diFieldValue = (jstring)env->GetObjectField(thiz, diFieldId);
+        if (diFieldValue == 0){
+            log("diFieldValue is 0 ");
+            return;
+        }
+
+        const char* diChars = env->GetStringUTFChars(diFieldValue, (jboolean *)0);
+        di.append(diChars);
+        env->ReleaseStringUTFChars(diFieldValue, diChars);
+
+        OICDevice* dev = getDevice(di);
+        if (dev != 0){
+            OICDeviceResource* res = getDeviceResource(dev, href);
+            if (res != 0){
+                //m_env->DeleteGlobalRef(globalCallback); //TODO clean it
+                res->unobserve([=] (COAPPacket* response){
+                    log("unobserve response");
+                });
+            }
+        }
+    }
+
+    void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_observe( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
+    {
+        m_jvm->AttachCurrentThread(&m_env, NULL);
+        String di;
+        String href;
+
+        const char* strChars = env->GetStringUTFChars(hrefTmp, (jboolean *)0);
+        href.append(strChars);
+        env->ReleaseStringUTFChars(hrefTmp, strChars);
+
+
+        jfieldID diFieldId = env->GetFieldID(m_OcfDeviceClass, "mDi", "Ljava/lang/String;" );
+        if (diFieldId == 0){
+            log("diFieldID is 0 ");
+            return;
+        }
+        jstring  diFieldValue = (jstring)env->GetObjectField(thiz, diFieldId);
+        if (diFieldValue == 0){
+            log("diFieldValue is 0 ");
+            return;
+        }
+
+        const char* diChars = env->GetStringUTFChars(diFieldValue, (jboolean *)0);
+        di.append(diChars);
+        env->ReleaseStringUTFChars(diFieldValue, diChars);
+
+
+        OICDevice* dev = getDevice(di);
+        if (dev != 0){
+            OICDeviceResource* res = getDeviceResource(dev, href);
+            if (res != 0){
+                jobject globalCallback = m_env->NewGlobalRef(callbackObject); //TODO: delete it later afetr unoberve is called
+
+                res->observe([=] (COAPPacket* response){
+                    log("observe response");
+                    m_jvm->AttachCurrentThread(&m_env, NULL);
+                    jmethodID callbackID = m_env->GetMethodID(m_OcfDeviceVariableCallbackClass, "update", "(Ljava/lang/String;)V");
+                    cbor cborResponse;
+                    cbor::parse(&cborResponse, response->getPayload());
+                    String cborString = cbor::toJsonString(&cborResponse);
+                    m_env->CallVoidMethod(globalCallback, callbackID, m_env->NewStringUTF(cborString.c_str()));
+                    m_jvm->DetachCurrentThread();
+                });
+            }
+        }
+    }
+    void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_post( JNIEnv* env, jobject thiz, jstring hrefTmp, jstring jsonString, jobject callbackObject)
+    {
+        m_jvm->AttachCurrentThread(&m_env, NULL);
+        log("post");
+        String di;
+        String href;
+        String value;
+
+        const char* strChars = env->GetStringUTFChars(hrefTmp, (jboolean *)0);
+        href.append(strChars);
+        env->ReleaseStringUTFChars(hrefTmp, strChars);
+
+
+        const char*  jsonChars = env->GetStringUTFChars(jsonString, (jboolean *)0);
+        value.append(jsonChars);
+        env->ReleaseStringUTFChars(hrefTmp, jsonChars);
+
+
+        jfieldID diFieldId = env->GetFieldID(m_OcfDeviceClass, "mDi", "Ljava/lang/String;" );
+        if (diFieldId == 0){
+            log("diFieldID is 0 ");
+            return;
+        }
+        jstring  diFieldValue = (jstring)env->GetObjectField(thiz, diFieldId);
+        if (diFieldValue == 0){
+            log("diFieldValue is 0 ");
+            return;
+        }
+
+        const char* diChars = env->GetStringUTFChars(diFieldValue, (jboolean *)0);
+        di.append(diChars);
+        env->ReleaseStringUTFChars(diFieldValue, diChars);
+
+        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "post %s %s %s",di.c_str(), href.c_str(), value.c_str());
+
+        cbor v;
+        v.parse_value(value.c_str());
+
+        OICDevice* dev = getDevice(di);
+        if (dev != 0){
+            OICDeviceResource* res = getDeviceResource(dev, href);
+            if (res != 0){
+                jobject globalCallback = m_env->NewGlobalRef(callbackObject);
+
+                res->post(&v, [=] (COAPPacket* response){
+                    log("post response");
+                    m_jvm->AttachCurrentThread(&m_env, NULL);
+                    jmethodID callbackID = m_env->GetMethodID(m_OcfDeviceVariableCallbackClass, "update", "(Ljava/lang/String;)V");
+                    m_env->CallVoidMethod(globalCallback, callbackID, 0);
                     m_env->DeleteGlobalRef(globalCallback);
                     m_jvm->DetachCurrentThread();
                 });
@@ -191,37 +339,37 @@ void findDevices()
 {
     __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "findDevices");
     m_client->searchDevices([&](COAPPacket* packet){
-        cbor* message = cbor::parse(packet->getPayload());
+        cbor message;
+        cbor::parse(&message, packet->getPayload());
 
-        if (message != 0){
+        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "found");
 
-            for (uint16_t i=0; i<message->toArray()->size(); i++){
-                cbor* device = message->toArray()->at(i);
+        for (uint16_t i=0; i<message.toArray()->size(); i++){
+            cbor device = message.toArray()->at(i);
 
-                String name = device->getMapValue("n")->toString();
-                String di= device->getMapValue("di")->toString();
+            String name = device.getMapValue("n").toString();
+            String di= device.getMapValue("di").toString();
 
-                __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "found device %s %s", name.c_str(), di.c_str());
+            __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "found device %s %s", name.c_str(), di.c_str());
 
-                if (isDeviceOnList(di)) continue;
+            if (isDeviceOnList(di)) continue;
 
-                cbor* links = device->getMapValue("links");
-                OICDevice* dev = new OICDevice(di, name, packet->getAddress(), m_client);
+            cbor links = device.getMapValue("links");
+            OICDevice* dev = new OICDevice(di, name, packet->getAddress(), m_client);
 
-                for (uint16_t j=0; j< links->toArray()->size(); j++){
-                    cbor* link = links->toArray()->at(j);
+            for (uint16_t j=0; j< links.toArray()->size(); j++){
+                cbor link = links.toArray()->at(j);
 
 
-                    String href = link->getMapValue("href")->toString();
-                    String rt = link->getMapValue("rt")->toString();
-                    String iff = link->getMapValue("if")->toString();
+                String href = link.getMapValue("href").toString();
+                String rt = link.getMapValue("rt").toString();
+                String iff = link.getMapValue("if").toString();
 
-                    dev->getResources()->push_back(new OICDeviceResource(href, iff, rt, dev, m_client));
-                }
-                m_devices.append(dev);
-                deviceFound(dev);
-
+                dev->getResources()->push_back(new OICDeviceResource(href, iff, rt, dev, m_client));
             }
+            m_devices.append(dev);
+            deviceFound(dev);
+
         }
     });
 }
@@ -281,8 +429,10 @@ void* run(void* param){
         rc = poll(&pfd, 1, 200); // 1000 ms timeout
         if (rc >0){
             rc = recvfrom(m_socketFd,buffer,sizeof(buffer),0,(struct sockaddr *)&client,&l);
-            COAPPacket* p = COAPPacket::parse(buffer, rc, convertAddress(client).c_str());
-            coap_server->handleMessage(p);
+            if (rc>0){
+                COAPPacket* p = COAPPacket::parse(buffer, rc, convertAddress(client).c_str());
+                coap_server->handleMessage(p);
+            }
         }
         coap_server->tick();
     }

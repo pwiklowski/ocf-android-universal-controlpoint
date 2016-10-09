@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 
 import ocfcontrolpoint.wiklosoft.libocf.OcfDevice;
 import ocfcontrolpoint.wiklosoft.libocf.OcfDeviceVariable;
+import ocfcontrolpoint.wiklosoft.libocf.OcfDeviceVariableCallback;
+
 /**
  * Created by pawwik on 29.06.15.
  */
@@ -20,6 +23,7 @@ public class VariableListAdapter extends BaseAdapter {
     LayoutInflater mInflater;
     TextView name;
     Activity mActivity;
+    private String TAG = "VariableListAdapter";
 
     VariableListAdapter(Activity context, OcfDevice device)
     {
@@ -48,24 +52,165 @@ public class VariableListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
-        OcfDeviceVariable variable = mDevice.variables().get(position);
+        final OcfDeviceVariable variable = mDevice.variables().get(position);
+        String value = variable.getValue();
+        Log.d("VariableListAdapter ", variable.getHref() + " " + variable.getResourceType() + " " + value);
 
-        Log.d("VariableListAdapter ", variable.getHref() + " " + variable.getResourceType());
-        if (vi == null){
-            if (variable.getResourceType().equals("oic.r.light.dimming")) {
-                vi = mInflater.inflate(R.layout.resource_light_dimming, null);
+        if (variable.getResourceType().equals("oic.r.light.dimming")) {
+            vi = mInflater.inflate(R.layout.resource_light_dimming, null);
+            SeekBar var = (SeekBar) vi.findViewById(R.id.variableValueSeekBar);
 
-            }else if (variable.getResourceType().equals("oic.r.colour.rgb")) {
-                vi = mInflater.inflate(R.layout.resource_colour_rgb, null);
-            }else{
-                vi = mInflater.inflate(R.layout.variable_entry, null);
+            Log.d(TAG, "Variable value" + variable.getHref() + value  );
+            if (value != null)
+                var.setProgress(Integer.valueOf(value));
+
+            var.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    int value = seekBar.getProgress();
+                    String v = "{\"rt\": \"oic.r.light.dimming\",\n" +
+                            "    \"dimmingSetting\": " + Integer.toString(value) + ",\n" +
+                            "    \"range\": \"0,255\"}";
+
+                    variable.setValue(v);
+
+                    mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
+                                                    @Override
+                                                    public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                    }
+                });
+
+                }
+            });
+
+
+
+
+        }else if (variable.getResourceType().equals("oic.r.colour.rgb")) {
+            vi = mInflater.inflate(R.layout.resource_colour_rgb, null);
+            final SeekBar red = (SeekBar) vi.findViewById(R.id.red);
+            final SeekBar green = (SeekBar) vi.findViewById(R.id.green);
+            final SeekBar blue = (SeekBar) vi.findViewById(R.id.blue);
+
+            Log.d(TAG, "Variable value" + variable.getHref() + value  );
+
+            if (value != null) {
+                String[] colors = value.split(",");
+
+                if (colors.length == 3) {
+                    red.setProgress(Integer.valueOf(colors[0]));
+                    green.setProgress(Integer.valueOf(colors[1]));
+                    blue.setProgress(Integer.valueOf(colors[2]));
+                }
             }
 
+
+            red.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) { }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) { }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    int value = seekBar.getProgress();
+                    String v = "{\"rt\": \"oic.r.colour.rgb\",\n" +
+                            "    \"dimmingSetting\": \"" + red.getProgress()+ "," +green.getProgress()+"," +blue.getProgress()+ "\"\n" +
+                            "    }";
+
+                    variable.setValue(v);
+
+                    mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+
+                }
+            });
+            green.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) { }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) { }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    int value = seekBar.getProgress();
+                    String v = "{\"rt\": \"oic.r.colour.rgb\",\n" +
+                            "    \"dimmingSetting\": \"" + red.getProgress()+ "," +green.getProgress()+"," +blue.getProgress()+ "\"\n" +
+                            "    }";
+
+                    variable.setValue(v);
+
+                    mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+
+                }
+            });
+            blue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) { }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) { }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    int value = seekBar.getProgress();
+                    String v = "{\"rt\": \"oic.r.colour.rgb\",\n" +
+                            "    \"dimmingSetting\": \"" + red.getProgress()+ "," +green.getProgress()+"," +blue.getProgress()+ "\"\n" +
+                            "    }";
+
+                    variable.setValue(v);
+
+                    mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+
+                }
+            });
+
+
+        }else{
+            vi = mInflater.inflate(R.layout.variable_entry, null);
         }
+
 
         name = (TextView) vi.findViewById(R.id.variableName);
 
         name.setText(variable.getHref());
+
+
+
+        if (variable.getResourceType().equals("oic.r.light.dimming")) {
+        }else if (variable.getResourceType().equals("oic.r.colour.rgb")) {
+
+        }else{
+        }
+
+
 
         return vi;
     }
