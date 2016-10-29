@@ -62,9 +62,15 @@ public class VariableListAdapter extends BaseAdapter {
 
             Log.d(TAG, "Variable value" + variable.getHref() + value  );
             if (value != null){
-
                 try {
                     int v = value.getInt("dimmingSetting");
+
+                    if (value.has("range")){
+                        String[] range = value.getString("range").split(",");
+                        if (range.length == 2){
+                            var.setMax(Integer.valueOf(range[1]));
+                        }
+                    }
                     var.setProgress(v);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -98,15 +104,15 @@ public class VariableListAdapter extends BaseAdapter {
 
                 }
             });
-
-
-
-
         }else if (variable.getResourceType().equals("oic.r.colour.rgb")) {
             vi = mInflater.inflate(R.layout.resource_colour_rgb, null);
             final SeekBar red = (SeekBar) vi.findViewById(R.id.red);
             final SeekBar green = (SeekBar) vi.findViewById(R.id.green);
             final SeekBar blue = (SeekBar) vi.findViewById(R.id.blue);
+
+            red.setMax(255);
+            green.setMax(255);
+            blue.setMax(255);
 
             Log.d(TAG, "Variable value" + variable.getHref() + value  );
 
