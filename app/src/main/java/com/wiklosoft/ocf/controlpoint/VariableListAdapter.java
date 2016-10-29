@@ -92,8 +92,6 @@ public class VariableListAdapter extends BaseAdapter {
                             "    \"dimmingSetting\": " + Integer.toString(value) + ",\n" +
                             "    \"range\": \"0,255\"}";
 
-                    variable.setValue(v);
-
                     mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
                                                     @Override
                                                     public void update(String json) {
@@ -140,12 +138,9 @@ public class VariableListAdapter extends BaseAdapter {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    int value = seekBar.getProgress();
                     String v = "{\"rt\": \"oic.r.colour.rgb\",\n" +
                             "    \"dimmingSetting\": \"" + red.getProgress()+ "," +green.getProgress()+"," +blue.getProgress()+ "\"\n" +
                             "    }";
-
-                    variable.setValue(v);
 
                     mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
                         @Override
@@ -165,12 +160,9 @@ public class VariableListAdapter extends BaseAdapter {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    int value = seekBar.getProgress();
                     String v = "{\"rt\": \"oic.r.colour.rgb\",\n" +
                             "    \"dimmingSetting\": \"" + red.getProgress()+ "," +green.getProgress()+"," +blue.getProgress()+ "\"\n" +
                             "    }";
-
-                    variable.setValue(v);
 
                     mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
                         @Override
@@ -190,12 +182,9 @@ public class VariableListAdapter extends BaseAdapter {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    int value = seekBar.getProgress();
                     String v = "{\"rt\": \"oic.r.colour.rgb\",\n" +
                             "    \"dimmingSetting\": \"" + red.getProgress()+ "," +green.getProgress()+"," +blue.getProgress()+ "\"\n" +
                             "    }";
-
-                    variable.setValue(v);
 
                     mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
                         @Override
