@@ -1,5 +1,6 @@
 package com.wiklosoft.ocf.controlpoint;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,29 +42,32 @@ public class VariableListFragment extends Fragment {
 
 
     public void updateVariable(final String json, final OcfDeviceVariable variable) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    JSONObject value = new JSONObject(json);
+        Activity a = getActivity();
+        if (a != null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject value = new JSONObject(json);
 
-                    if (variable.getResourceType().contains("oic.r.light.dimming")){
-                        String v = value.getString("dimmingSetting");
-                        variable.setValue(v);
+                        if (variable.getResourceType().contains("oic.r.light.dimming")){
+                            String v = value.getString("dimmingSetting");
+                            variable.setValue(v);
+                        }
+
+                        if (variable.getResourceType().contains("oic.r.colour.rgb")){
+                            String v = value.getString("dimmingSetting");
+                            variable.setValue(v);
+                        }
+
+
+                        mAdapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-                    if (variable.getResourceType().contains("oic.r.colour.rgb")){
-                        String v = value.getString("dimmingSetting");
-                        variable.setValue(v);
-                    }
-
-
-                    mAdapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
-        });
+            });
+        }
     }
 
     public void setDevice(OcfDevice  device)
