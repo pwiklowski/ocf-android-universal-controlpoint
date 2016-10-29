@@ -1,4 +1,4 @@
-package ocfcontrolpoint.wiklosoft.libocf;
+package com.wiklosoft.ocf;
 
 import android.util.Log;
 

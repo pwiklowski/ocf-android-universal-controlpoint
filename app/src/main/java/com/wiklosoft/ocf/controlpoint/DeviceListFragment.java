@@ -1,4 +1,4 @@
-package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
+package com.wiklosoft.ocf.controlpoint;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,8 +13,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ocfcontrolpoint.wiklosoft.libocf.OcfControlPoint;
-import ocfcontrolpoint.wiklosoft.libocf.OcfDevice;
+import com.wiklosoft.ocf.OcfControlPoint;
+import com.wiklosoft.ocf.OcfDevice;
 
 
 public class DeviceListFragment extends Fragment {

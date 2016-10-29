@@ -1,4 +1,4 @@
-package ocfcontrolpoint.wiklosoft.libocf;
+package com.wiklosoft.ocf;
 
 /**
  * Created by Pawel Wiklowski on 07.04.16.

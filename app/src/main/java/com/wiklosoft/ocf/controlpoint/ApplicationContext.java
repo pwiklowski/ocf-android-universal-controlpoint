@@ -1,8 +1,8 @@
-package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
+package com.wiklosoft.ocf.controlpoint;
 
 import android.app.Application;
 
-import ocfcontrolpoint.wiklosoft.libocf.OcfControlPoint;
+import com.wiklosoft.ocf.OcfControlPoint;
 
 /**
  * Created by Pawel Wiklowski on 11.04.16.

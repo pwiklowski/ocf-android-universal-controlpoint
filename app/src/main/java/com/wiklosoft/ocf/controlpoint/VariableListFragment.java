@@ -1,26 +1,23 @@
-package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
+package com.wiklosoft.ocf.controlpoint;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.wiklosoft.ocf.OcfControlPoint;
+import com.wiklosoft.ocf.OcfDevice;
+import com.wiklosoft.ocf.OcfDeviceVariable;
+import com.wiklosoft.ocf.OcfDeviceVariableCallback;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import ocfcontrolpoint.wiklosoft.libocf.OcfControlPoint;
-import ocfcontrolpoint.wiklosoft.libocf.OcfDevice;
-import ocfcontrolpoint.wiklosoft.libocf.OcfDeviceVariable;
-import ocfcontrolpoint.wiklosoft.libocf.OcfDeviceVariableCallback;
 
 
 public class VariableListFragment extends Fragment {

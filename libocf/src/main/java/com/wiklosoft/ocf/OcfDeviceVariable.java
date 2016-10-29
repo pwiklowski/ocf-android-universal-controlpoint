@@ -1,6 +1,4 @@
-package ocfcontrolpoint.wiklosoft.libocf;
-
-import android.util.Log;
+package com.wiklosoft.ocf;
 
 /**
  * Created by Pawel Wiklowski on 05.04.16.

@@ -59,7 +59,7 @@ jobject createDevice(OICDevice* dev){
     jmethodID constructor = m_env->GetMethodID(m_OcfDeviceClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V");
     jobject obj = m_env->NewObject(m_OcfDeviceClass, constructor, m_env->NewStringUTF(dev->getName().c_str()), m_env->NewStringUTF(dev->getId().c_str()));
 
-    jmethodID addVariableMethod = m_env->GetMethodID(m_OcfDeviceClass, "appendVariable", "(Locfcontrolpoint/wiklosoft/libocf/OcfDeviceVariable;)V");
+    jmethodID addVariableMethod = m_env->GetMethodID(m_OcfDeviceClass, "appendVariable", "(Lcom/wiklosoft/ocf/OcfDeviceVariable;)V");
 
     for(size_t i=0; i<dev->getResources()->size(); i++)
     {
@@ -82,17 +82,17 @@ void deviceFound(OICDevice* dev){
     m_jvm->AttachCurrentThread(&m_env, NULL);
     jobject d2 = createDevice(dev);
 
-    jmethodID gJMethodID = m_env->GetMethodID(m_class, "deviceFound", "(Locfcontrolpoint/wiklosoft/libocf/OcfDevice;)V");
+    jmethodID gJMethodID = m_env->GetMethodID(m_class, "deviceFound", "(Lcom/wiklosoft/ocf/OcfDevice;)V");
     m_env->CallVoidMethod(m_obj, gJMethodID, d2);
     m_jvm->DetachCurrentThread();
 }
-void Java_ocfcontrolpoint_wiklosoft_libocf_OcfControlPoint_searchDevices( JNIEnv* env, jobject thiz)
+void Java_com_wiklosoft_ocf_OcfControlPoint_searchDevices( JNIEnv* env, jobject thiz)
 {
     findDevices();
 }
 
 
-void Java_ocfcontrolpoint_wiklosoft_libocf_OcfControlPoint_init( JNIEnv* env, jobject thiz)
+void Java_com_wiklosoft_ocf_OcfControlPoint_init( JNIEnv* env, jobject thiz)
 {
     m_env = env;
     m_obj = env->NewGlobalRef(thiz);
@@ -100,13 +100,13 @@ void Java_ocfcontrolpoint_wiklosoft_libocf_OcfControlPoint_init( JNIEnv* env, jo
     m_class = (jclass)env->NewGlobalRef(clazz);
 
 
-    jclass ocfDeviceClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDevice");
+    jclass ocfDeviceClass = env->FindClass("com/wiklosoft/ocf/OcfDevice");
     m_OcfDeviceClass = (jclass)env->NewGlobalRef(ocfDeviceClass);
 
-    jclass ocfDeviceVariableClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDeviceVariable");
+    jclass ocfDeviceVariableClass = env->FindClass("com/wiklosoft/ocf/OcfDeviceVariable");
     m_OcfDeviceVariableClass = (jclass)env->NewGlobalRef(ocfDeviceVariableClass);
 
-    jclass ocfDeviceVariableCallbackClass = env->FindClass("ocfcontrolpoint/wiklosoft/libocf/OcfDeviceVariableCallback");
+    jclass ocfDeviceVariableCallbackClass = env->FindClass("com/wiklosoft/ocf/OcfDeviceVariableCallback");
     m_OcfDeviceVariableCallbackClass = (jclass)env->NewGlobalRef(ocfDeviceVariableCallbackClass);
 
     oic_server = new OICClient([&](COAPPacket* packet){
@@ -118,7 +118,7 @@ void Java_ocfcontrolpoint_wiklosoft_libocf_OcfControlPoint_init( JNIEnv* env, jo
 
     //findDevices();
 }
-void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_get( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
+void Java_com_wiklosoft_ocf_OcfDevice_get( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
 {
     m_jvm->AttachCurrentThread(&m_env, NULL);
     log("get");
@@ -173,7 +173,7 @@ void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_get( JNIEnv* env, jobject t
 }
 
 
-void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_unobserve( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
+void Java_com_wiklosoft_ocf_OcfDevice_unobserve( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
 {
     m_jvm->AttachCurrentThread(&m_env, NULL);
     String di;
@@ -211,7 +211,7 @@ void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_unobserve( JNIEnv* env, job
     }
 }
 
-void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_observe( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
+void Java_com_wiklosoft_ocf_OcfDevice_observe( JNIEnv* env, jobject thiz, jstring hrefTmp, jobject callbackObject)
 {
     m_jvm->AttachCurrentThread(&m_env, NULL);
     String di;
@@ -257,7 +257,7 @@ void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_observe( JNIEnv* env, jobje
         }
     }
 }
-void Java_ocfcontrolpoint_wiklosoft_libocf_OcfDevice_post( JNIEnv* env, jobject thiz, jstring hrefTmp, jstring jsonString, jobject callbackObject)
+void Java_com_wiklosoft_ocf_OcfDevice_post( JNIEnv* env, jobject thiz, jstring hrefTmp, jstring jsonString, jobject callbackObject)
 {
     m_jvm->AttachCurrentThread(&m_env, NULL);
     log("post");

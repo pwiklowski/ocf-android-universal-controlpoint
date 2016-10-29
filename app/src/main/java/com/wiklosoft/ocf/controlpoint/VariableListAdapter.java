@@ -1,4 +1,4 @@
-package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
+package com.wiklosoft.ocf.controlpoint;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,10 +10,10 @@ import android.widget.BaseAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.wiklosoft.ocf.OcfDevice;
+import com.wiklosoft.ocf.OcfDeviceVariable;
+import com.wiklosoft.ocf.OcfDeviceVariableCallback;
 
-import ocfcontrolpoint.wiklosoft.libocf.OcfDevice;
-import ocfcontrolpoint.wiklosoft.libocf.OcfDeviceVariable;
-import ocfcontrolpoint.wiklosoft.libocf.OcfDeviceVariableCallback;
 
 /**
  * Created by pawwik on 29.06.15.

@@ -1,4 +1,4 @@
-package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
+package com.wiklosoft.ocf.controlpoint;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;

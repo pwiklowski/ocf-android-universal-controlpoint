@@ -1,4 +1,4 @@
-package ocfcontrolpoint.wiklosoft.iotcontrolpoint;
+package com.wiklosoft.ocf.controlpoint;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.List;
+import com.wiklosoft.ocf.OcfDevice;
 
-import ocfcontrolpoint.wiklosoft.libocf.OcfDevice;
+import java.util.List;
 
 /**
  * Created by pawwik on 29.06.15.
