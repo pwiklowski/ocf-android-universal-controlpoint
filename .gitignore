@@ -9,3 +9,7 @@
 *.d
 *.so
 .idea/*
+libocf/.externalNativeBuild/*
+libocf/src/main/jni/CMakeFiles/
+Makefile
+*.swp

@@ -10,6 +10,12 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++11"
+            }
+        }
+
     }
     buildTypes {
         release {
@@ -17,12 +23,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
         }
     }
+
+
 }
 
 dependencies {

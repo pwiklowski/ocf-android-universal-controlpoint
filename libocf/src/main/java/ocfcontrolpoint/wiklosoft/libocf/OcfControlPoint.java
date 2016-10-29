@@ -14,7 +14,7 @@ public class OcfControlPoint {
     private static final String TAG = "OcfControlPoint";
 
     static {
-        System.loadLibrary("test");
+        System.loadLibrary("ocfapp");
     }
     private native void init();
     public native void searchDevices();
