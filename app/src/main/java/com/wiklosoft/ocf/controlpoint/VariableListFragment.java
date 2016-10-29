@@ -49,18 +49,7 @@ public class VariableListFragment extends Fragment {
                 public void run() {
                     try {
                         JSONObject value = new JSONObject(json);
-
-                        if (variable.getResourceType().contains("oic.r.light.dimming")){
-                            String v = value.getString("dimmingSetting");
-                            variable.setValue(v);
-                        }
-
-                        if (variable.getResourceType().contains("oic.r.colour.rgb")){
-                            String v = value.getString("dimmingSetting");
-                            variable.setValue(v);
-                        }
-
-
+                        variable.setValue(value);
                         mAdapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();

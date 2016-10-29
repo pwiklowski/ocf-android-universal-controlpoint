@@ -14,6 +14,9 @@ import com.wiklosoft.ocf.OcfDevice;
 import com.wiklosoft.ocf.OcfDeviceVariable;
 import com.wiklosoft.ocf.OcfDeviceVariableCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 /**
  * Created by pawwik on 29.06.15.
@@ -53,16 +56,23 @@ public class VariableListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
         final OcfDeviceVariable variable = mDevice.variables().get(position);
-        String value = variable.getValue();
         Log.d("VariableListAdapter ", variable.getHref() + " " + variable.getResourceType() + " " + value);
+        JSONObject value = variable.getValue();
 
         if (variable.getResourceType().equals("oic.r.light.dimming")) {
             vi = mInflater.inflate(R.layout.resource_light_dimming, null);
             SeekBar var = (SeekBar) vi.findViewById(R.id.variableValueSeekBar);
 
             Log.d(TAG, "Variable value" + variable.getHref() + value  );
-            if (value != null)
-                var.setProgress(Integer.valueOf(value));
+            if (value != null){
+
+                try {
+                    int v = value.getInt("dimmingSetting");
+                    var.setProgress(v);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
             var.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -106,7 +116,12 @@ public class VariableListAdapter extends BaseAdapter {
             Log.d(TAG, "Variable value" + variable.getHref() + value  );
 
             if (value != null) {
-                String[] colors = value.split(",");
+                String[] colors = new String[0];
+                try {
+                    colors = value.getString("dimmingSetting").split(",");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 if (colors.length == 3) {
                     red.setProgress(Integer.valueOf(colors[0]));
