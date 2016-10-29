@@ -35,7 +35,6 @@ public class VariableListAdapter extends BaseAdapter {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
@@ -53,10 +52,8 @@ public class VariableListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
+    public View getView(int position, View vi, ViewGroup parent) {
         final OcfDeviceVariable variable = mDevice.variables().get(position);
-        Log.d("VariableListAdapter ", variable.getHref() + " " + variable.getResourceType() + " " + value);
         JSONObject value = variable.getValue();
 
         if (variable.getResourceType().equals("oic.r.light.dimming")) {
@@ -192,27 +189,16 @@ public class VariableListAdapter extends BaseAdapter {
                             Log.d("VariableListAdapter", "value set");
                         }
                     });
-
                 }
             });
-
-
         }else{
             vi = mInflater.inflate(R.layout.variable_entry, null);
         }
 
 
         name = (TextView) vi.findViewById(R.id.variableName);
-
         name.setText(variable.getHref());
 
-
-
-        if (variable.getResourceType().equals("oic.r.light.dimming")) {
-        }else if (variable.getResourceType().equals("oic.r.colour.rgb")) {
-
-        }else{
-        }
 
 
 
