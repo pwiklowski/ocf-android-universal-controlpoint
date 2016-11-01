@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.wiklosoft.ocf.OcfDevice;
@@ -60,14 +62,14 @@ public class VariableListAdapter extends BaseAdapter {
             vi = mInflater.inflate(R.layout.resource_light_dimming, null);
             SeekBar var = (SeekBar) vi.findViewById(R.id.variableValueSeekBar);
 
-            Log.d(TAG, "Variable value" + variable.getHref() + value  );
-            if (value != null){
+            Log.d(TAG, "Variable value" + variable.getHref() + value);
+            if (value != null) {
                 try {
                     int v = value.getInt("dimmingSetting");
 
-                    if (value.has("range")){
+                    if (value.has("range")) {
                         String[] range = value.getString("range").split(",");
-                        if (range.length == 2){
+                        if (range.length == 2) {
                             var.setMax(Integer.valueOf(range[1]));
                         }
                     }
@@ -96,14 +98,43 @@ public class VariableListAdapter extends BaseAdapter {
                             "    \"range\": \"0,255\"}";
 
                     mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
-                                                    @Override
-                                                    public void update(String json) {
+                        @Override
+                        public void update(String json) {
                             Log.d("VariableListAdapter", "value set");
-                    }
-                });
+                        }
+                    });
 
                 }
             });
+        }else if (variable.getResourceType().equals("oic.r.switch.binary")) {
+            vi = mInflater.inflate(R.layout.resource_binnary, null);
+
+            Switch sw = (Switch) vi.findViewById(R.id.switchButton);
+
+            if (value != null) {
+                boolean checked = false;
+                try {
+                    checked = value.getBoolean("value");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                sw.setChecked(checked);
+            }
+            sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    String v = "{\"value\": "+b+"}";
+
+                    mDevice.post(variable.getHref(), v, new OcfDeviceVariableCallback() {
+                        @Override
+                        public void update(String json) {
+                            Log.d("VariableListAdapter", "value set");
+                        }
+                    });
+                }
+            });
+
+
         }else if (variable.getResourceType().equals("oic.r.colour.rgb")) {
             vi = mInflater.inflate(R.layout.resource_colour_rgb, null);
             final SeekBar red = (SeekBar) vi.findViewById(R.id.red);
